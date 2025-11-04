@@ -6,27 +6,32 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# 🔗 Conexão com o banco (Render injeta DATABASE_URL automaticamente)
-DATABASE_URL = os.getenv("postgresql://landing_db_okua_user:9xQZoSLmZG6svPzS63RP5SBSSJtAvOKh@dpg-d44uqt7gi27c73ajedt0-a.oregon-postgres.render.com/landing_db_okua")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Função auxiliar para conectar
+if not DATABASE_URL:
+    raise RuntimeError("❌ DATABASE_URL não configurada! Configure-a nas variáveis do Render.")
+
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
-# 🔹 Criar tabela caso ainda não exista
-with get_connection() as conn:
-    with conn.cursor() as cur:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS cotacoes (
-                id SERIAL PRIMARY KEY,
-                nome TEXT,
-                email TEXT,
-                telefone TEXT,
-                mensagem TEXT,
-                criado_em TIMESTAMP DEFAULT NOW()
-            )
-        """)
-        conn.commit()
+# Criar tabela caso ainda não exista
+try:
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS cotacoes (
+                    id SERIAL PRIMARY KEY,
+                    nome TEXT,
+                    email TEXT,
+                    telefone TEXT,
+                    mensagem TEXT,
+                    criado_em TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            conn.commit()
+except Exception as e:
+    print("⚠️ Erro ao criar tabela:", e)
+
 
 @app.route("/api/cotacao", methods=["POST"])
 def receber_cotacao():
