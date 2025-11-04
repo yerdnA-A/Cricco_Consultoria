@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       console.log("Dados do formulário prontos para envio:", dados);
 
       try {
-        const resposta = await fetch("http://localhost:5000/api/cotacao", {
+        const resposta = await fetch("/api/cotacao", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
