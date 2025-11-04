@@ -47,16 +47,20 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }
         } else {
+          const msg =
+            typeof resultado.mensagem === "object"
+              ? JSON.stringify(resultado.mensagem, null, 2)
+              : resultado.mensagem;
+
           if (errorMessage) {
-            errorMessage.textContent =
-              "Erro ao enviar formulário: " + resultado.mensagem;
+            errorMessage.textContent = "Erro ao enviar formulário: " + msg;
             errorMessage.classList.remove("hidden");
             errorMessage.scrollIntoView({
               behavior: "smooth",
               block: "center",
             });
           } else {
-            alert("Erro ao enviar formulário: " + resultado.mensagem);
+            alert("Erro ao enviar formulário: " + msg);
           }
         }
 
@@ -71,15 +75,5 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Ocorreu um erro ao enviar o formulário. Tente novamente.");
       }
     });
-  }
-  if (resultado.status === "erro") {
-    if (errorMessage) {
-      errorMessage.textContent =
-        "Erro ao enviar formulário: " + JSON.stringify(resultado.mensagem);
-      errorMessage.classList.remove("hidden");
-      errorMessage.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      alert("Erro ao enviar formulário: " + JSON.stringify(resultado.mensagem));
-    }
   }
 });
