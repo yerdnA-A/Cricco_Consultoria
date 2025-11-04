@@ -8,7 +8,6 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID_VENDEDOR = os.getenv("CHAT_ID_VENDEDOR")
-CHAT_ID_EU = os.getenv("CHAT_ID_EU")
 
 @app.route("/")
 def home():
@@ -33,25 +32,24 @@ def receber_cotacao():
     )
 
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    erros = []
+    payload = {
+        "chat_id": CHAT_ID_VENDEDOR,
+        "text": mensagem
+    }
 
-    for chat_id in [CHAT_ID_EU, CHAT_ID_VENDEDOR]:
-        payload = {"chat_id": chat_id, "text": mensagem}
-        try:
-            response = requests.post(url, json=payload)
-            response_data = response.json()
-            print(f"Resposta Telegram para {chat_id}:", response_data)
-            if response.status_code != 200 or not response_data.get("ok"):
-                erros.append({chat_id: response_data})
-        except Exception as e:
-            print(f"Erro ao enviar para {chat_id}:", e)
-            erros.append({chat_id: str(e)})
+    try:
+        response = requests.post(url, json=payload)
+        response_data = response.json()
+        print("Resposta Telegram:", response_data)
 
-    if erros:
-        return jsonify({"status": "erro", "mensagem": erros}), 500
+        if response.status_code == 200 and response_data.get("ok"):
+            return jsonify({"status": "sucesso", "mensagem": "Cotação enviada pelo Telegram!"})
+        else:
+            return jsonify({"status": "erro", "mensagem": response_data}), 500
+    except Exception as e:
+        print("Erro ao enviar para o Telegram:", e)
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
 
-    return jsonify({"status": "sucesso", "mensagem": "Cotação enviada para você e para o vendedor!"})
-    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
