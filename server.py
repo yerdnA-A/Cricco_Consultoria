@@ -1,22 +1,14 @@
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
 import os
-from twilio.rest import Client  # <--- integração WhatsApp
+import requests
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-CORS(app)
 
 load_dotenv()
 
-# Configurações do Twilio
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_WHATSAPP_NUMBER = os.getenv("TWILIO_WHATSAPP_NUMBER")
-VENDEDOR_WHATSAPP = os.getenv("VENDEDOR_WHATSAPP")
-
-client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID_VENDEDOR = os.getenv("CHAT_ID_VENDEDOR")
 
 @app.route("/")
 def home():
@@ -39,19 +31,25 @@ def receber_cotacao():
         📄 *Status:* {dados.get('status_carta').replace('_', ' ').title()}
         """
     
-    try:
-        # Envia a mensagem via WhatsApp para o vendedor
-        client.messages.create(
-            from_=TWILIO_WHATSAPP_NUMBER,
-            body=mensagem,
-            to=VENDEDOR_WHATSAPP
-        )
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": CHAT_ID_VENDEDOR,
+        "text": mensagem,
+        "parse_mode":"Markdown"
+    }
 
-        return jsonify({"status": "sucesso", "mensagem": "Cotação enviada com sucesso!"})
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            return jsonify({"status": "sucesso", "mensagem": "Cotação enviada pelo Telegram!"})
+        else:
+            return jsonify({"status": "erro", "mensagem": response.text}), 500
     except Exception as e:
-        print("Erro ao enviar WhatsApp:", e)
+        print("Erro ao enviar para o Telegram:", e)
         return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
