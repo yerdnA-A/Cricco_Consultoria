@@ -64,9 +64,7 @@
           >
             Quero Fazer uma Cotação Grátis
           </a>
-          <p class="text-sm text-gray-500 mt-4">
-            Pagamento via PIX em até 24h após a assinatura.
-          </p>
+          <p class="text-sm text-gray-500 mt-4">Pagamento via PIX na hora</p>
         </div>
       </section>
 
@@ -346,7 +344,7 @@
                       >Valor da Carta (R$)</label
                     >
                     <input
-                      type="text"
+                      type="number"
                       id="valor_carta"
                       name="valor_carta"
                       required
@@ -361,7 +359,7 @@
                       >Valor Pago (R$)</label
                     >
                     <input
-                      type="text"
+                      type="number"
                       id="valor_pago"
                       name="valor_pago"
                       required
@@ -504,35 +502,12 @@
         </div>
         <p class="text-sm">
           &copy; 2025 Cricco Consultoria. Todos os direitos reservados. CNPJ:
-          XX.XXX.XXX/0001-XX.
+          58.150.206/0001-88.
         </p>
       </div>
     </footer>
 
     <!-- Script para simular o envio do formulário -->
-    <script>
-      document
-        .getElementById("form-cotacao")
-        .addEventListener("submit", function (e) {
-          e.preventDefault(); // Impede o envio real do formulário
-
-          // Simulação de envio
-          // Aqui você integraria com seu backend ou ferramenta de CRM
-
-          // Exibe a mensagem de sucesso
-          document.getElementById("success-message").classList.remove("hidden");
-
-          // Opcional: rola a tela para a mensagem de sucesso
-          document
-            .getElementById("success-message")
-            .scrollIntoView({ behavior: "smooth" });
-
-          // Limpa o formulário após um tempo (opcional)
-          setTimeout(() => {
-            e.target.reset();
-            document.getElementById("success-message").classList.add("hidden");
-          }, 5000); // Esconde a mensagem após 5 segundos
-        });
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
