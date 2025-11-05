@@ -76,9 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao enviar formulário: " + msg);
           }
         }
-
-        if (successMessage) successMessage.classList.add("hidden");
-        if (errorMessage) errorMessage.classList.add("hidden");
       } catch (erro) {
         console.error("Erro ao enviar dados:", erro);
         alert("Ocorreu um erro ao enviar o formulário. Tente novamente.");
