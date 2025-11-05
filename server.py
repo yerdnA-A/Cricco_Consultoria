@@ -12,6 +12,7 @@ CHAT_ID_VENDEDOR = os.getenv("CHAT_ID_VENDEDOR")
 @app.route("/")
 def home():
     return render_template("index.html")
+
 @app.route('/termos-de-uso')
 def termos():
     return render_template('termos-de-uso.html')
